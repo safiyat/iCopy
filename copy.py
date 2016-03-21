@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#! /usr/bin/python
+
 import os
 import sys
 import shutil
@@ -16,6 +17,9 @@ class Color:
     UNDERLINE = '\033[4m'
     END = '\033[0m'
 
+def usage(argv):
+    print "Usage: %s SOURCE DESTINATION" % argv[0]
+    return
 
 def log(final_list):
     fp = open('list_details.txt', 'w')
@@ -33,7 +37,7 @@ def copy_data(final_list):
             shutil.copy2(s, d)
 
 if len(sys.argv) != 3:
-    print 'Usage: command source destination'
+    usage(sys.argv)
     exit()
 
 src = sys.argv[1]

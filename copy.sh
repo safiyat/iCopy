@@ -14,7 +14,7 @@ IFS='
 '
 i=1
 list=`ls $SRC`
-for a in 
+for a in
 do
 	# echo $a
 	if [ -f $a ]
