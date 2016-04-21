@@ -2,7 +2,7 @@
 
 import os
 import sys
-import shutil
+import hashlib
 
 
 class Color:
@@ -17,14 +17,11 @@ class Color:
     UNDERLINE = '\033[4m'
     END = '\033[0m'
 
-def usage(argv):
-    print "Usage: %s SOURCE DESTINATION" % argv[0]
-    return
 
 def list_contents(path='.', full_list=None):
     path = os.path.abspath(path)
     contents = os.listdir(path)
-    if full_list == None:
+    if full_list is None:
         full_list = []
     for entry in contents:
         cur_path = os.path.join(path, entry)
@@ -37,108 +34,28 @@ def list_contents(path='.', full_list=None):
     full_list.sort()
     return full_list
 
-# def log(final_list):
-#     fp = open('list_details.txt', 'w')
-#     for a in final_list:
-#         x = a[0][-40:].ljust(40)
-#         y = a[1][-40:].ljust(40)
-#         z = a[2]
-#         fp.write('...' + x + '    ' + '...' + y + '    ' + z + '\n')
-#     fp.close()
+
+def md5(path):
+    md5object = hashlib.new('md5')
+    BLOCKSIZE = 4096
+    path = os.path.abspath(path)
+    f = open(path)
+    text = f.read(BLOCKSIZE)
+    while text:
+        md5object.update(text)
+        text = f.read(BLOCKSIZE)
+    return md5object.hexdigest()
 
 
-# def copy_data(final_list):
-#     for s, d, status in final_list:
-#         if status == 'N':  # New
-#             shutil.copy2(s, d)
+def main():
+    path = sys.argv[1]
 
-# if len(sys.argv) != 3:
-#     usage(sys.argv)
-#     exit()
+    file_list = list_contents(path)
 
-# src = sys.argv[1]
-# dest = sys.argv[2]
-# conf_count = 0
-# conf_list = []
-# final_list = []
+    for f in file_list:
+        md5sum = md5(f)
+        print "%s : %s" % (f.ljust(50), md5sum.ljust(60))
 
 
-# if os.path.isdir(src):
-#     if src[-1] != os.sep:
-#         src += os.sep
-#     # if the src is a directory, dest too will be a directory.
-#     if dest[-1] != os.sep:
-#         dest += os.sep
-#     ######################################################################
-#     ls = os.listdir(src)
-#     rsourcefiles = []
-#     i = 0
-#     while True:
-#         try:
-#             a = ls[i]
-#             i += 1
-#             # print 'Processing: ' + a + ' ' + str(i)
-#         except Exception:
-#             break
-#         # if os.path.isdir(src + a.split(src)[-1]):
-#         #     print 'Expanding ' + src + a.split(src)[-1]
-#         #     templs = os.listdir(src + a.split(src)[-1])
-#         #     ls += [src + a.split(src)[-1] + os.sep + b for b in templs]
-#         # else:
-#         #     rsourcefiles.append(a)
-#         if os.path.isdir(src + a):
-#             # print 'Expanding ' + src + a
-#             templs = os.listdir(src + a)
-#             ls += [a + os.sep + b for b in templs]
-#         else:
-#             rsourcefiles.append(a)
-#     destfiles = []
-#     for a in rsourcefiles:
-#         destpath = dest + a
-#         if os.path.isfile(destpath):
-#             conf_count += 1
-#             # print str(conf_count) + ' 1Conflict between ' + a + ' and '\
-#             #     + destpath
-#             shash = os.popen('md5sum ' + src + a).read().split()[0]
-#             dhash = os.popen('md5sum ' + destpath).read().split()[0]
-#             if shash == dhash:
-#                 status = 'D'  # Duplicate
-#             else:
-#                 status = 'R'  # Revised
-#             conf_list.append([src + a, destpath, status])
-#             destfiles.append('')
-#         else:
-#             status = 'N'      # New
-#             destfiles.append(destpath)
-#         final_list.append([src + a, destpath, status])
-
-# else:   # source is file. Destination can be a directory or a file.
-#     if os.path.exists(dest):
-#         if os.path.isdir(dest):
-#             if dest[-1] != os.sep:
-#                 dest += os.sep
-#             destfiles = [dest + src.split(os.sep)[-1]]
-#             status = 'N'
-#         else:
-#             conf_count += 1
-#             # print str(conf_count) + ' 2Conflict between ' + Color.RED\
-#             #     + src + Color.END + ' and ' + Color.YELLOW + dest + Color.END
-#             shash = os.popen('md5sum ' + src).read().split()[0]
-#             dhash = os.popen('md5sum ' + dest).read().split()[0]
-#             if shash == dhash:
-#                 status = 'D'  # Duplicate
-#             else:
-#                 status = 'R'  # Revised
-#             conf_list.append([src, dest])
-#         final_list.append([src, dest, status])
-
-# log(final_list)
-# copy_data(final_list)
-# """
-# for a in final_list:
-#     if a[2] == 'N':
-#         print '##########'
-#     elif a[2] == 'R':
-#         print '$$$$$$$$$$'
-#     print a
-# """
+if __name__ == '__main__':
+    sys.exit(main())
