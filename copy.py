@@ -3,6 +3,7 @@
 import os
 import sys
 import hashlib
+import time
 
 
 class Color:
@@ -41,13 +42,13 @@ class File(object):
         return self.size
 
     def get_fileatime(self):
-        return self.atime
+        return time.ctime(self.atime)
 
     def get_filectime(self):
-        return self.ctime
+        return time.ctime(self.ctime)
 
     def get_filemtime(self):
-        return self.mtime
+        return time.ctime(self.mtime)
 
     def get_filetime(self):
         return (self.get_fileatime(), self.get_filectime(),
