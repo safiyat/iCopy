@@ -1,4 +1,5 @@
 testbed/
 list_details.txt
-*#
-*~
+*#*
+*~*
+venv*
