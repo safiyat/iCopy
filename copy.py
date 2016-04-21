@@ -26,9 +26,8 @@ class File(object):
 
     def set_filename(self, path):
         self.abspath = os.path.abspath(path)
-        # self.relpath = self.abspath with head common with
-        #                os.path.abspath('.') removed
-        self.relpath = path
+        self.relpath = os.path.commonprefix([self.abspath,
+                                             os.path.abspath('.')])
         self.md5sum = self.md5(self.abspath)
         self.size = os.path.getsize(self.abspath)
         self.atime = os.path.getatime(self.abspath)
@@ -37,6 +36,9 @@ class File(object):
 
     def get_filename(self):
         return self.abspath
+
+    def get_relpath(self):
+        return self.relpath
 
     def get_filesize(self):
         return self.size
@@ -94,7 +96,6 @@ def main():
         fileobj = File(f)
         print "%s : %s" % (fileobj.get_filename().ljust(50),
                            fileobj.get_md5().ljust(60))
-
 
 if __name__ == '__main__':
     sys.exit(main())
