@@ -4,6 +4,7 @@ import os
 import sys
 import argparse
 from iCopy.file import File
+from iCopy.utilities import *
 
 
 class Color:
@@ -17,23 +18,6 @@ class Color:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
     END = '\033[0m'
-
-
-def list_contents(path='.', full_list=None):
-    path = os.path.abspath(path)
-    contents = os.listdir(path)
-    if full_list is None:
-        full_list = []
-    for entry in contents:
-        cur_path = os.path.join(path, entry)
-        if os.path.isfile(cur_path):
-            full_list.append(cur_path)
-        elif os.path.isdir(cur_path):
-            list_contents(cur_path, full_list)
-        else:
-            print "%s failed." % (cur_path)
-    full_list.sort()
-    return full_list
 
 
 def main():
