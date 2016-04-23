@@ -2,8 +2,8 @@
 
 import os
 import sys
-import hashlib
-import time
+import argparse
+from iCopy.file import File
 
 
 class Color:
@@ -17,57 +17,6 @@ class Color:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
     END = '\033[0m'
-
-
-class File(object):
-    def __init__(self, path=None):
-        if path is not None:
-            self.set_filename(path)
-
-    def set_filename(self, path):
-        self.abspath = os.path.abspath(path)
-        self.relpath = os.path.commonprefix([self.abspath,
-                                             os.path.abspath('.')])
-        self.md5sum = self.md5(self.abspath)
-        self.size = os.path.getsize(self.abspath)
-        self.atime = os.path.getatime(self.abspath)
-        self.ctime = os.path.getctime(self.abspath)
-        self.mtime = os.path.getmtime(self.abspath)
-
-    def get_filename(self):
-        return self.abspath
-
-    def get_relpath(self):
-        return self.relpath
-
-    def get_filesize(self):
-        return self.size
-
-    def get_fileatime(self):
-        return time.ctime(self.atime)
-
-    def get_filectime(self):
-        return time.ctime(self.ctime)
-
-    def get_filemtime(self):
-        return time.ctime(self.mtime)
-
-    def get_filetime(self):
-        return (self.get_fileatime(), self.get_filectime(),
-                self.get_filemtime())
-
-    def get_md5(self):
-        return self.md5sum.hexdigest()
-
-    def md5(self, path):
-        md5object = hashlib.new('md5')
-        BLOCKSIZE = 4096
-        f = open(path)
-        text = f.read(BLOCKSIZE)
-        while text:
-            md5object.update(text)
-            text = f.read(BLOCKSIZE)
-        return md5object
 
 
 def list_contents(path='.', full_list=None):
@@ -88,9 +37,20 @@ def list_contents(path='.', full_list=None):
 
 
 def main():
-    path = sys.argv[1]
 
-    file_list = list_contents(path)
+    parser = argparse.ArgumentParser(description='An intelligent tool to copy'
+                                     ' (and move, in future) files and '
+                                     'directories from one location to '
+                                     'another.')
+    parser.add_argument('-s', '--source', type=str, required=True)
+    parser.add_argument('-d', '--dest', type=str, required=True)
+
+    args = parser.parse_args()
+
+    src = args.source
+    dest = args.dest
+
+    file_list = list_contents(src)
 
     for f in file_list:
         fileobj = File(f)
