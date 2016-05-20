@@ -22,8 +22,8 @@ class Color:
 
 def main():
 
-    parser = argparse.ArgumentParser(description='An intelligent tool to copy'
-                                     ' (and move, in future) files and '
+    parser = argparse.ArgumentParser(description='An intelligent tool to copy '
+                                     '(and move, in future) files and '
                                      'directories from one location to '
                                      'another.')
     parser.add_argument('-s', '--source', type=str, required=True)
@@ -35,6 +35,7 @@ def main():
     dest = args.dest
 
     file_list = list_contents(src)
+
 
     for f in file_list:
         fileobj = File(f)
