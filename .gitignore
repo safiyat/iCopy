@@ -2,3 +2,5 @@ testbed/
 list_details.txt
 *#
 *~
+*.log
+.idea/
